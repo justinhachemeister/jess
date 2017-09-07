@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# TODO: Add header: describe jess, credit iRedMail, add GNU License text.
+
+# Exit when a command fails.
+set -o errexit
+
+# Exit status of last command is returned.
+set -o pipefail
+
+# Exit when undeclared variable is used.
+set -o nounset
+
+readonly ROOT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+readonly CONFIG_DIRECTORY="${ROOTDIR}/conf"
