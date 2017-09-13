@@ -3,6 +3,7 @@
 A scripting project to set up an email server on an Arch Linux distribution. Inspired by [iRedMail](https://bitbucket.org/zhb/iredmail).
 
 Supported Packages:
+
 - [] postfix
 - [] dovecot
 - [] roundcubemail
