@@ -11,6 +11,29 @@ set -o pipefail
 # Exit when undeclared variable is used.
 set -o nounset
 
-readonly ROOT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Constants:
+readonly LOGGING_PROGRAM="log4sh"
 
-readonly CONFIG_DIRECTORY="${ROOTDIR}/conf"
+main()
+{
+  readonly root_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  readonly dependencies_directory="${root_directory}/dependencies"
+  readonly config_directory="${root_directory}/conf"
+
+  set_up_logging "${dependencies_directory}/${LOGGING_PROGRAM}"
+}
+
+set_up_logging()
+{
+  if [ -r "${1}/${LOGGING_PROGRAM}" ]; then
+    LOG4SH_CONFIGURATION='none' . "$1/${LOGGING_PROGRAM}"
+  else
+    echo "ERROR: could not load (log4sh)" >&2
+    exit 1
+  fi
+
+  logger_setLevel INFO
+  logger_info "Hello, world!"
+}
+
+main
