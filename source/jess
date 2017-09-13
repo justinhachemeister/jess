@@ -12,21 +12,21 @@ set -o pipefail
 set -o nounset
 
 # Constants:
-readonly LOGGING_PROGRAM="log4sh"
+readonly LOGGER="log4sh"
 
 main()
 {
   readonly root_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  readonly dependencies_directory="${root_directory}/dependencies"
+  readonly dependencies_directory="${root_directory}/../dependencies"
   readonly config_directory="${root_directory}/conf"
 
-  set_up_logging "${dependencies_directory}/${LOGGING_PROGRAM}"
+  set_up_logging "${dependencies_directory}/${LOGGER}"
 }
 
 set_up_logging()
 {
-  if [ -r "${1}/${LOGGING_PROGRAM}" ]; then
-    LOG4SH_CONFIGURATION='none' . "$1/${LOGGING_PROGRAM}"
+  if [ -r "${1}/${LOGGER}" ]; then
+    LOG4SH_CONFIGURATION='none' . "$1/${LOGGER}"
   else
     echo "ERROR: could not load (log4sh)" >&2
     exit 1
