@@ -4,6 +4,7 @@ Have you read the project's [Code of Conduct](CODE_OF_CONDUCT.md)?
 By filing an Issue, you are expected to comply with it, including treating everyone with respect.
 
 Are you looking for an answer to a question? Have you checked to see if the answer can be found in the wiki's?
+
 * [BitBucket](https://bitbucket.org/justinhachemeister/jess/wiki/)
 * [GitHub](https://github.com/justinhachemeister/jess/wiki)
 * [GitLab](https://gitlab.com/justinhachemeister/jess/wikis/)
