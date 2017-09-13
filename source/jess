@@ -13,14 +13,20 @@ set -o nounset
 
 # Constants:
 readonly LOGGER="log4sh"
+readonly CONFIG_FILE="jess_config"
+
+# TODO: Load variables
 
 main()
 {
-  readonly root_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  readonly dependencies_directory="${root_directory}/../dependencies"
-  readonly config_directory="${root_directory}/conf"
+  readonly ROOT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  readonly DEPENDENCIES_DIRECTORY="${ROOT_DIRECTORY}/../dependencies"
+  readonly LOGGER_DIRECTORY="${DEPENDENCIES_DIRECTORY}/${LOGGER}"
+  readonly CONFIG_DIRECTORY="${ROOT_DIRECTORY}/config"
+  readonly CORE_DIRECTORY="${ROOT_DIRECTORY}/core"
 
-  set_up_logging "${dependencies_directory}/${LOGGER}"
+  set_up_logging "${LOGGER_DIRECTORY}"
+  load_config "${CONFIG_DIRECTORY}"
 }
 
 set_up_logging()
@@ -34,6 +40,16 @@ set_up_logging()
 
   logger_setLevel INFO
   logger_info "Hello, world!"
+}
+
+load_config()
+{
+  if [ -r "${1}/${CONFIG_FILE}" ]; then
+    . "$1/${CONFIG_FILE}"
+  else
+    echo "ERROR: could not load config (jess)" >&2
+    exit 1
+  fi
 }
 
 main
