@@ -1,10 +1,18 @@
 # Justin's Email Server Setup (JESS)
+[![License](https://img.shields.io/badge/License-MIT%20License-blue.svg)](LICENSE)
+[![Gratipay User](https://img.shields.io/gratipay/user/JustinHachemeister.svg?label=Gratipay)](https://gratipay.com/~Justinhachemeister/)
 
 A scripting project to set up an email server on an Arch Linux distribution. Inspired by [iRedMail](https://bitbucket.org/zhb/iredmail).
 
 ## Purpose
 
 The purpose of this project is to configure and install an email server on an Arch Linux distribution. The project idea is inspired by [iRedMail](https://bitbucket.org/zhb/iredmail), since iRedMail does not support Archi Linux distributions.
+
+## Issues
+
+[![GitHub](https://img.shields.io/github/issues-raw/JustinHachemeister/JESS/website.svg?label=GitHub)](https://github.com/JustinHachemeister/JESS/issues)
+[![BitBucket](https://img.shields.io/bitbucket/issues-raw/JustinHachemeister/JESS.svg?label=BitBucket)](https://bitbucket.org/JustinHachemeister/JESS/issues)
+[![GitLab](https://img.shields.io/badge/GitLab-%3f-yellow.svg?style=plastic)](https://gitlab.com/JustinHachemeister/JESS/issues)
 
 ## General Features
 
