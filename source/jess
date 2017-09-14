@@ -20,7 +20,7 @@ readonly CONFIG_FILE="jess_config"
 main()
 {
   readonly ROOT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  readonly DEPENDENCIES_DIRECTORY="${ROOT_DIRECTORY}/../dependencies"
+  readonly DEPENDENCIES_DIRECTORY="${ROOT_DIRECTORY}/dependencies"
   readonly LOGGER_DIRECTORY="${DEPENDENCIES_DIRECTORY}/${LOGGER}"
   readonly CONFIG_DIRECTORY="${ROOT_DIRECTORY}/config"
   readonly CORE_DIRECTORY="${ROOT_DIRECTORY}/core"
