@@ -2,22 +2,23 @@
 
 A scripting project to set up an email server on an Arch Linux distribution. Inspired by [iRedMail](https://bitbucket.org/zhb/iredmail).
 
-Supported Packages:
+## Purpose
+
+## General Features
+
+- [] Allow user configuration.
+- [] Check user permissions.
+- [] Check the environment.
+- [] Validate user configuration.
+- [] Check package integrity.
+- [] Download missing packages.
+- [] Install/Configure postfix.
+
+## Supported Packages
 
 - [] postfix
 - [] dovecot
 - [] roundcubemail
-
-## Purpose
-
-## Features
-
-- [] Allow user configuration.
-- [] Validate user configuration.
-- [] Check the environment.
-- [] Check package integrity.
-- [] Download missing packages.
-- [] Install/Configure postfix.
 
 ## How?
 
