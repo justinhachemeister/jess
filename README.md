@@ -12,7 +12,7 @@ The purpose of this project is to configure and install an email server on an Ar
 
 [![GitHub](https://img.shields.io/github/issues-raw/JustinHachemeister/JESS/website.svg?label=GitHub)](https://github.com/JustinHachemeister/JESS/issues)
 [![BitBucket](https://img.shields.io/bitbucket/issues-raw/JustinHachemeister/JESS.svg?label=BitBucket)](https://bitbucket.org/JustinHachemeister/JESS/issues)
-[![GitLab](https://img.shields.io/badge/GitLab-%3f-yellow.svg?style=plastic)](https://gitlab.com/JustinHachemeister/JESS/issues)
+[![GitLab](https://img.shields.io/badge/GitLab-%3f-yellow.svg?style=flat)](https://gitlab.com/JustinHachemeister/JESS/issues)
 
 ## General Features
 
