@@ -8,7 +8,7 @@ Following these guidelines helps to communicate that you respect the time of the
 
 ## Table of Contents
 
-[What Should I Know Before I Get Started?](#what-should-i-know-before-i-get-started)
+[What Should I Know Before I Get Started?](#what-should-i-know-before-i-get-started?)
   * [Code of Conduct](#code-of-conduct)
   * [Project Purpose](#project-purpose)
   * [Documentation](#documentation)
@@ -19,14 +19,14 @@ Following these guidelines helps to communicate that you respect the time of the
   * [Building the Project](#building-the-project)
   * [Running the Tests](#running-the-tests)
 
-[How Can I Contribute?](#how-can-i-contribute)
+[How Can I Contribute?](#how-can-i-contribute?)
   * [Reporting Security Vulnerabilities](#reporting-security-vulnerabilities)
   * [Reporting Bugs](#reporting-bugs)
     * [Before Submitting a Bug Report](#before-submitting-a-bug-report)
-    * [How Do I Submit A (Good) Bug Report?](#how-do-i-submit-a-good-bug-report)
+    * [How Do I Submit A (Good) Bug Report?](#how-do-i-submit-a-good-bug-report?)
   * [Suggesting Enhancements](#suggesting-enhancements)
     * [Before Submitting an Enhancement Request](#before-submitting-an-enhancement-request)
-    * [How Do I Submit A (Good) Enhancement Request?](#how-do-i-submit-a-good-enhancement-request)
+    * [How Do I Submit A (Good) Enhancement Request?](#how-do-i-submit-a-good-enhancement-request?)
   * [Your First Code Contribution](#your-first-code-contribution)
   * [Pull Requests](#pull-requests)
 
@@ -62,7 +62,7 @@ If you have any questions, please check to see if the answer can be found in the
 
 If it is not documented in any of these places, please reach out via [email](mailto:f204631e@opayq.com). Please do not use the issue trackers for support questions.
 
-## How Do I Get Started
+## How Do I Get Started?
 
 ### PreRequisites
 
@@ -102,9 +102,27 @@ git clone https://gitlab.com/JustinHachemeister/jess.git jess.git
 
 This section guides you through compiling the project from source. Following these guidelines will help you get a working environment on your local machine for development and testing purposes.
 
+#### Command-Line
+
+JESS is a command-line BASH shell project, so the command line is the only method to build the project. Until a Makefile is created, only the manual 'build' process is available.
+
+##### Manual
+
+From the JESS root directory created from [cloning the code](#get-the-code), copy everything in the source directory except the tests directory.
+
 ### Running the Tests
 
-## How Can I Contribute
+This section guides you through running the unit tests included in the source. Following these guidelines will help you get the unit tests running to verify the project works as designed. 
+
+#### Command-Line
+
+JESS is a command-line BASH shell project, so the command line is the only option to test the project.
+
+##### Manual
+
+From the JESS root directory, navigate to the tests directory in the source folder from the command-line. Once there, run any of the files in the test directory. More information about how the unit testing framework can be used can be found on [here](https://github.com/kward/shunit2).
+
+## How Can I Contribute?
 
 This section guides you through the guidelines set in place in order to contribute to the project.
 
@@ -223,7 +241,8 @@ If a maintainer asks you to "rebase" your pull request, they are saying that a l
 
 ### Git Commit Messages
 
-This project follows the [Seven Rules of a Great Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules)
+This project follows the [Seven Rules of a Great Git Commit Message](https://chris.beams.io/posts/git-commit/#seven-rules).
+
 1. Separate subject from body with a blank line.
 2. Limit the subject line to 50 characters.
 3. Capitalize the subject line.
@@ -234,18 +253,51 @@ This project follows the [Seven Rules of a Great Git Commit Message](https://chr
 
 ### BASH Style Guide
 
+The project's BASH Style Guide is still being finalized.
+
 ### Unit Test Style Guide
 
+JESS uses the [BASH Style Guide](#bash-style-guide) for naming unit tests and test files.
+
+This project uses the following naming style for unit tests:
+
+1. An operation
+2. The operation should or should not
+3. Have this effect on the state
+
+#### Example
+
+```sh
+check_user_should_fail_when_user_is_not_an_admin_role()
+```
+
 ### Documentation Style Guide
+
+* Use [Markdown](https://daringfireball.net/projects/markdown).
+* Reference single value keywords with a single backtick such as `readonly`
+* Reference code snippets using the triple backtick with the language immediately following afterwards.
+
+#### Example
+
+```sh
+pacman -Syu
+./jess
+```
 
 ## Additional Notes
 
 ### Issue and Pull Request Labels
 
+This section lists the labels we use to help us track and manage issues and pull requests
+
 #### Type of Issue and Issue State
+
+This project's issue types are still being finalized as BitBucket does not have this capability.
 
 #### Topic Categories
 
+This project's issue types are still being finalized as BitBucket does not have this capability.
+
 #### Pull Request Labels
 
-This section lists the labels we use to help us track and manage issues and pull requests.
+This project's issue types are still being finalized as BitBucket does not have this capability.
