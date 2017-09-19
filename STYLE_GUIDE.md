@@ -1,46 +1,63 @@
 # Bash Style Guide
 
-Based on the [Community Bash Style Guide](https://github.com/azet/community_bash_style_guide).
+Based on the [Community Bash Style Guide](https://github.com/azet/community_bash_style_guide) and the [Numenta Bash Style Guide](https://github.com/numenta/numenta-apps/wiki/Bash-Style-Guide).
+
+The contents of this document are meant as a guideline. In case of conflicts between this guide and [ShellCheck](https://github.com/koalaman/shellcheck), take ShellCheck.
 
 ## Introduction
 
-This is intended to be a bash style and best practice guide. There are a lot of blog posts and articles out there, but they do not always agree on certain issues, and mostly lack hints and best practices to achieve a specific goal (e.g. which userland utilities to use, which built-ins can be used instead and which userland utilities you should avoid at all cost).  It's not that difficult to figure out a common strategy. so here it is.
+This is intended to be a bash style and best practice guide. There are a lot of blog posts and articles out there, but they do not always agree on certain issues, and mostly lack hints and best practices to achieve a specific goal (e.g. which userland utilities to use, which built-ins can be used instead and which userland utilities you should avoid at all cost).  It is not that difficult to figure out a common strategy; so here it is.
 
 Here's how you write bash code that somebody else will actually understand, is unit testable and will work in different environments no matter what. please read the mentioned articles, you will not regret it. Furthermore people that will have to work with or maintain your scripts will not hate you in the future.
 
 ## Table of Contents
-1. [Style conventions](#style-conventions)
-2. [Resources](#resources)
-3. [Common mistakes and useful tricks](#common-mistakes-and-useful-tricks)
-4. [Trivia section](#trivia-section)
-5. [Final remarks](#final-remarks)
+1. [When to use Bash](#when-to-use-bash)
+2. [When to avoid Bash](#when-to-avoid-bash)
+3. [Before you write or edit any bash](#before-you-write-or-edit-any-bash)
+4. [Style conventions](#style-conventions)
+5. [Resources](#resources)
+6. [Common mistakes and useful tricks](#common-mistakes-and-useful-tricks)
+7. [Trivia section](#trivia-section)
+8. [Final remarks](#final-remarks)
+
+## When to Use Bash
+
+* Small scripts that set a few environment variables (typically PYTHONPATH, PATH, AWS credentials), perhaps set up a working directory, then call a Python script to do real work. If the python script can also do any necessary clean up after itself, the last line of the bash script should be `exec /path/to/foo.py $@` so that the shell script wrapper inherits the python script's exit code.
+* Scripts with very minimal logic and are essentially just "run these half dozen commands in order."
+* Cron jobs and init scripts, since they should have their environment explicitly set instead of trusting that they will receive any custom setup.
+
+## When to Avoid Bash
+
+* If you go to edit a script and there's already a TODO saying to rewrite it in Python, rewrite it in Python no matter how trivial the changes you want to make seem.
+* If your script is longer than 50-75 lines, you should be using functions. Individual functions should rarely be more than 20-40 lines. If you have more than a half dozen or so functions, it is probably time to move to Python.
+* Functions in the script are complex enough to need local variables.
+* **You're trying to create associative arrays (Bash's equivalent to dicts in Python)**
+* **You need data structures.**
+* **It takes more than 15 minutes Googling to figure out how to make Bash do what you want.**
+
+## Before you write or edit any bash
+
+* Read David Pashley's [Writing Robust Shell Scripts](http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181) article.
+* Read Google's [Shell Programming Style Guide](https://google-styleguide.googlecode.com/svn/trunk/shell.xml).
+* Read [Bash Pitfalls](http://bash.cumulonim.biz/BashPitfalls.html).
+* Install [shellcheck](https://github.com/koalaman/shellcheck) on your laptop - Shellcheck is essentially pylint for bash. Always run it before creating a pull request for your bash scripts. There are instructions on [github](https://github.com/koalaman/shellcheck) for creating a binary on your machine so you don't have to use the web form at [http://www.shellcheck.net/](http://www.shellcheck.net/). On OS X, shellcheck can be installed with `brew install shellcheck`.
+* Read the [Community Bash Style Guide](https://github.com/azet/community_bash_style_guide).
+* Read [Numenta's Bash Style Guide](https://github.com/numenta/numenta-apps/wiki/Bash-Style-Guide).
 
 ## Style conventions
 
-This is based on most common practices and guides available. It is
-also what I've seen others recommend and use and seemed most consistent
-and/or logical.
+This is based on most common practices and guides available. It is also what I've seen others recommend and use and seemed most consistent and/or logical.
 
 * use the `#!/usr/bin/env bash` shebang wherever possible
-* memorize and utilize `set -eu -o pipefail` at the very beginning of
-  your code:
-  * never write a script without `set -e` at the very very beginning.
-  This instructs bash to terminate in case a command or chain of command
-  finishes with a non-zero exit status. The idea behind this is that a proper
-  programm should never have unhandled error conditions. Use constructs like
-  `if myprogramm --parameter ; then ... ` for calls that might fail and
-  require specific error handling. Use a cleanup trap for everything else.
-  * use `set -u` in your scripts. This will terminate your scripts in
-  case an uninitialized variable is accessed. This is especially important when
-  developing shell libraries, since library code accessing uninitialized
-  variables will fail in case it's used in another script which sets the `-u`
-  flag. Obviously this flag is relevant to the script's/code's security.
-  * use `set -o pipefail` to get an exit status from a pipeline (last
-  non-zero will be returned).
+* memorize and utilize `set -eu -o pipefail` at the very beginning of your code:
+  * never write a script without `set -e` at the very very beginning. This instructs bash to terminate in case a command or chain of command finishes with a non-zero exit status. The idea behind this is that a proper programm should never have unhandled error conditions. Use constructs like   `if myprogramm --parameter ; then ... ` for calls that might fail and   require specific error handling. Use a cleanup trap for everything else.
+  * use `set -u` in your scripts. This will terminate your scripts in case an uninitialized variable is accessed. This is especially important when developing shell libraries, since library code accessing uninitialized variables will fail in case it's used in another script which sets the `-u` flag. Obviously this flag is relevant to the script's/code's security.
+  * use `set -o pipefail` to get an exit status from a pipeline (last non-zero will be returned).
 * never use TAB for indentation:
    * consistently use two (2) character indentation.
 * **always** put parameters in double-quotes: `util "--argument" "${variable}"`.
-* do not put `if .. then`, `while .. do` or `for .. do`, `case .. in` et cetera on a new line. this is more a tradition than actual convention. Most Bash programmers will use that style - for the sake of simplicity, let's do this well:
+* do not put `if .. then`, `while .. do` or `for .. do`, `case .. in` et cetera on a new line. this is more a tradition than actual convention. Most Bash programmers will use that style - for the sake of simplicity, please do this as well:
+
     ```bash
     if ${event}; then
       ...
@@ -59,12 +76,10 @@ and/or logical.
 * always set local function variables `local`
 * write clear code
   * **never** obfuscate what the script is trying to do
-  * **never** shorten uncessesarily with a lot of commands per LoC chained
-    with a semicolon
+  * **never** shorten uncessesarily with a lot of commands per LoC chained with a semicolon
 * Bash does not have a concept of public and private functions, thus;
   * public functions get generic names, whereas
-  * private functions are prepended by two underscores (RedHat
-    convention)
+  * private functions are prepended by two underscores (RedHat convention)
 * try to stick to the `pushd`, `popd`, and `dirs` builtins for [directory stack manipulation](https://www.gnu.org/software/bash/manual/html_node/Directory-Stack-Builtins.html#Directory-Stack-Builtins) where sensible
 * every line must have a maximum of eighty (80) terminal columns
 * like in other dynamic languages, switch/case blocks should be aligned:
@@ -79,10 +94,8 @@ and/or logical.
 
 * only `trap` / handle signals you actually do care about
 * use the builtin `readonly` when declaring constants and immutable variable
-* assign integer variables, arrays, etc. with 
-  `typeset`/`declare` ([see also](http://tldp.org/LDP/abs/html/declareref.html))
-* always work with return values instead of strings passed from a
-  function or userland utility (where applicable)
+* assign integer variables, arrays, etc. with `typeset`/`declare` ([see also](http://tldp.org/LDP/abs/html/declareref.html))
+* always work with return values instead of strings passed from a function or userland utility (where applicable)
 * write generic small check functions instead of large init and clean-up code:
     
     ```bash
@@ -100,6 +113,7 @@ and/or logical.
 * clearly document code parts that are not easily understood (long chains of piped commands for example)
 * try to stick to [restricted mode](http://www.tldp.org/LDP/abs/html/restricted-sh.html) where sensible and possible to use: `set -r` (not supported in old versions of Bash). **Use with caution.** While this flag is *very useful for security* sensitive environments, scripts have to be written with the flag in mind. Adding restricted mode to an existing script will most likely break it.
 * Thus, scripts should somewhat reflect the following general layout:
+
    ```
    #!/usr/bin/env bash
    #
@@ -128,10 +142,13 @@ and/or logical.
     - testing of functions, conditionals and flow (see style guide)
     - makes restricted mode ("set -r") for security sense here?
    ```
-* Silence is golden - like in any UNIX programm, avoid cluttering the
-  terminal with useless output. [Read this](http://www.linfo.org/rule_of_silence.html).
+
+* Silence is golden - like in any UNIX programm, avoid cluttering the terminal with useless output. [Read this](http://www.linfo.org/rule_of_silence.html).
 
 ## Resources
+
+### General resources
+* https://sparrowhub.org/
 
 ### General documentation, style guides, tutorials and articles:
 * https://www.gnu.org/software/bash/manual/bashref.html
@@ -176,70 +193,89 @@ and/or logical.
 ## Common mistakes and useful tricks
 
 ### Never use backticks
-wrong:
+Wrong:
+
 ```bash
 `call_command_in_subshell`
 ```
-correct:
+
+Correct:
+
 ```bash
 $(call_command_in_subshell)
 ```
 
 Backticks are POSIX compliant but not 100% portable (doesn't work on Solaris 10 /bin/sh for example). Backticks also cannot be nested without being escaped (which looks just insane):
+
 ```bash
 $(call_command_in_subshell $(different_command $(yetanother_as_parameter)))
 ```
+
 ### Multiline pipe
 
-instead of:
+Instead of:
+
 ```bash
 ls ${long_list_of_parameters} | grep ${foo} | grep -v grep | pgrep | wc -l | sort | uniq
 ```
-do:
+
+Do:
+
 ```bash
 ls ${long_list_of_parameters} \
     | grep ${foo}             \
-    | grep -v grep              \
-    | pgrep                     \
-    | wc -l                     \
-    | sort                      \
+    | grep -v grep            \
+    | pgrep                   \
+    | wc -l                   \
+    | sort                    \
     | uniq
 ```
+
 ..far more readable, isn't it?
 
 ### Overusing grep and `grep -v`
-please never do that. there's almost certainly a better way to express this.
 
+Please never do that. There is almost certainly a better way to express this.
 
-for example:
+For example:
+
 ```bash
 ps ax | grep ${processname} | grep -v grep
 ```
-versus using appropriate userland utilities:
+
+Versus using appropriate userland utilities:
+
 ```bash
 pgrep ${processname}
 ```
+
 ### Using `awk(1)` to print an element
-stackexchange is full of this behavoir:
+
+StackExchange is full of this behavoir:
 
 ```bash
 ${listofthings} | awk '{ print $3 }' # get the third item
 ```
-you may use bashisms instead:
+
+You may use bashisms instead:
+
 ```bash
 listofthings=(${listofthings}) # convert to array
 ${listofthings[3]}
 ```
 
 ### Use built in variable expansion instead of sed/awk
-instead of this
-```
+
+Instead of this:
+
+```bash
 VAR=FOO
 printf ${VAR} | awk '{print tolower($0)}' # foo
 ```
 
-use built in expansion like this
-```
+Use built in expansion like this:
+
+```bash
 # ${VAR^} # upper single
 # ${VAR^^} # upper all
 # ${VAR,} # lower single
@@ -251,8 +287,9 @@ VAR=BAR
 printf ${VAR,,} # bar
 ```
 
-same thing with string replacement.
-```
+Same thing with string replacement:
+
+```bash
 # ${VAR/PATTERN/STRING} # single replacement
 # ${VAR//PATTERN/STRING} # all match replacement
 # Use ${VAR#PATTERN} ${VAR%PATTERN} ${VAR/PATTERN} for string removal
@@ -266,55 +303,62 @@ ${VAR//foo} # bar
 More examples and uses here: http://wiki.bash-hackers.org/syntax/pe
 
 ### Do not use `seq` for ranges
+
 use `{x..y}` instead!
 
 e.g.:
+
 ```bash
 for k in {1..100}; do
     $(do_awesome_stuff_with_input ${k})
 done
 ```
 
-the built-in range expression can do much more, see: http://wiki.bash-hackers.org/syntax/expansion/brace#ranges
+The built-in range expression can do much more, see: http://wiki.bash-hackers.org/syntax/expansion/brace#ranges
 
 ### Timeouts
+
 The GNU coreutils program `timeout(1)` should be used to timeout processes: https://www.gnu.org/software/coreutils/manual/html_node/timeout-invocation.html
 
 caveat: `timeout(1)` might not be available on BSD, Mac OS X and UNIX systems.
 
 ### Please use `printf` instead of `echo`
-the bash builtin `printf` should be preferred to `echo` where possible. it does work like `printf` in C or any other high-level language, for reference see: http://wiki.bash-hackers.org/commands/builtin/printf
+
+The bash builtin `printf` should be preferred to `echo` where possible. it does work like `printf` in C or any other high-level language, for reference see: http://wiki.bash-hackers.org/commands/builtin/printf
 
 ### Bash arithmetic instead of `expr`
-bash offers the whole nine yards of arithmetic expressions directly as built-in bashisms.   
+
+Bash offers the whole nine yards of arithmetic expressions directly as built-in bashisms.   
 
  **DO NOT USE `expr`**
-
 
 for reference see:
 * http://wiki.bash-hackers.org/syntax/arith_expr
 * http://www.softpanorama.org/Scripting/Shellorama/arithmetic_expressions.shtml
 
-
 ### Never use `bc(1)` for modulo operations
-it will come to hurt you, trust me.
+
+It will come to hurt you, trust me.
 
 `bc(1)` does not properly handle modulo operations most of the time: https://superuser.com/questions/31445/gnu-bc-modulo-with-scale-other-than-0
 
 ### FIFO/named pipes
-if you do not know what a named pipe is, please read this: http://wiki.bash-hackers.org/howto/redirection_tutorial
 
+If you do not know what a named pipe is, please read this: http://wiki.bash-hackers.org/howto/redirection_tutorial
 
 ### disown
+
 `disown` is a bash built-in that can be used to remove a job from the job table of a bash script. for example, if you spawn a lot of sub processes, you can remove one or multiple of these processes with `disown` and the script will not care about it anymore.
 
-see: https://www.gnu.org/software/bash/manual/bashref.html#index-disown
+See: https://www.gnu.org/software/bash/manual/bashref.html#index-disown
 
 ### Basic parallelism
-usually people use `&` to send a process to the background and `wait` to wait for the process to finish. people then often use named pipes, files and global variables to communicate between the parent and sub programs.
+
+Usually people use `&` to send a process to the background and `wait` to wait for the process to finish. people then often use named pipes, files and global variables to communicate between the parent and sub programs.
 
 ### `xargs`
-for file-based in-node parallelization, `xargs` is the easiest way to parallelize the processing of list elements.
+
+For file-based in-node parallelization, `xargs` is the easiest way to parallelize the processing of list elements.
 
 ```bash
 # simple example: replace all occurences of "foo" with "bar" in ".txt" files
@@ -329,11 +373,13 @@ find ${dirName} -name "*.h5" | xargs -n1 -P64 -I{} \
 ```
 
 ### `coproc` and GNU parallel
+
 `coproc` can be used instead to have parallel jobs that can easily communicate with each other: http://wiki.bash-hackers.org/syntax/keywords/coproc
 
-another excellent way to parallelize things in bash, especially for easy distribution over multiple hosts via SSH, is by using GNU parallel: https://www.gnu.org/software/parallel/parallel_tutorial.html 
+Another excellent way to parallelize things in bash, especially for easy distribution over multiple hosts via SSH, is by using GNU parallel: https://www.gnu.org/software/parallel/parallel_tutorial.html 
 
 ### Trapping, exception handling and failing gracefully
+
 `trap` is used for signal handling in bash, a generic error handling function may be used like this:
 
 ```bash
@@ -358,32 +404,29 @@ function fail() {
 do_stuff ${withinput} || fail "did not do stuff correctly" ${FILENAME} ${LINENO} $?
 ```
 
-Trapping on `EXIT` instead of a specific signal is particularly useful for
-cleanup handlers since this executes the handler regardless of the reason for
-the script's termination. This also includes reaching the end of your script
-and aborts due to `set -e`.
+Trapping on `EXIT` instead of a specific signal is particularly useful for cleanup handlers since this executes the handler regardless of the reason for the script's termination. This also includes reaching the end of your script and aborts due to `set -e`.
 
 ### You don't need cat
-sometimes `cat` is not available, but with bash you can read files anyhow.
+
+Sometimes `cat` is not available, but with bash you can read files anyhow.
 
 ```bash
 batterystatus=$(< /sys/class/power_supply/BAT0/status)
 printf "%s\n" ${batterystatus}
 ```
 
-Also avoid `cat` where reading a file can be achieved through passing the
-file name as a parameter. Never do `cat ${FILENAME} | grep -v ...`, instead
-use `grep -v ... ${FILENAME}`.
+Also avoid `cat` where reading a file can be achieved through passing the file name as a parameter. Never do `cat ${FILENAME} | grep -v ...`, instead use `grep -v ... ${FILENAME}`.
 
 ### locking (file based)
-`flock(1)` is an userland utility for managing file based locking
-from within shell scripts. It supports exclusive and shared locks.
+
+`flock(1)` is an userland utility for managing file based locking from within shell scripts. It supports exclusive and shared locks.
 
 ### Mutex (Mutual Exclusion)
 mutex, although rather complex, is possible, too:
 http://wiki.bash-hackers.org/howto/mutex
 
 ### Use the `getopt` builtin for command line parameters
+
 ```bash
 printf "This script is: %s\n" ${0##/*/}
 
@@ -424,12 +467,12 @@ done
 ```
 
 ## Trivia section
-This section outlines stuff that can be done in Bash but is not
-necessarily a good idea to do in Bash - might still come in handy for
-some corner cases or for curious Bash hackers, I've chosen to include
+
+This section outlines stuff that can be done in Bash but is not necessarily a good idea to do in Bash - might still come in handy for some corner cases or for curious Bash hackers, I've chosen to include
 that information.
 
 ### Anonymous Functions (Lambdas)
+
 Yup, it's possible. But you'll probably never need them, in case you
 really do, here's how:
 
@@ -444,9 +487,11 @@ function lambda() {
 ```
 
 ### Using sockets with bash
-although i do not really recommend it, it's possible to do simple (or even complex) socket operations in bash using the `/dev/tcp` and `/dev/udp` pseudo-devices: http://wiki.bash-hackers.org/syntax/redirection
 
-example:
+Although i do not really recommend it, it's possible to do simple (or even complex) socket operations in bash using the `/dev/tcp` and `/dev/udp` pseudo-devices: http://wiki.bash-hackers.org/syntax/redirection
+
+Example:
+
 ```bash
 function recv() {
    local proto=${1} # tcp or udp
@@ -469,25 +514,20 @@ you may consider using `nc` (netcat) or even the far more advanced program `soca
 * http://stuff.mit.edu/afs/sipb/machine/penguin-lust/src/socat-1.7.1.2/EXAMPLES
 
 ### Foreign Function Interface
-Tavis Ormandy wrote a FFI for Bash. You can directly access function
-from shared libraries in bash using `ctypes.sh`. It's a nice hack, but
-use is somewhat discouraged. Use userland utilities.
+
+Tavis Ormandy wrote a FFI for Bash. You can directly access function from shared libraries in bash using `ctypes.sh`. It's a nice hack, but use is somewhat discouraged. Use userland utilities.
 
 [ctypes.sh](https://github.com/taviso/ctypes.sh)
 
 ## Final remarks
-Every contribution is valuable to this effort. I'll do my best to
-incorporate all positive and negative feedback, criticism  and am,
-of course, looking forward to people opening issues and pull requests
+
+Every contribution is valuable to this effort. I'll do my best to incorporate all positive and negative feedback, criticism  and am, of course, looking forward to people opening issues and pull requests
 for this project.
 
 Please spread the word!
 
 ## Licensing
-This project is licensed under a [Creative Commons Attribution 4.0
-International License](https://creativecommons.org/licenses/by/4.0/).
 
-The full legal code is contained in the `LICENSE` file distributed with
-this repository.
+The full legal code is contained in the `LICENSE` file distributed with this repository applies to the contents of this repository, except for this document as it was pieced together from other sources. Please see the license contents of those documents.
 
-![license](https://i.creativecommons.org/l/by/4.0/88x31.png)
+The Community Bash Style Guide is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). The full legal code is contained in the `LICENSE` file distributed with that repository.
